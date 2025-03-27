@@ -1,22 +1,35 @@
 "use client";
 import { Button } from "@/components/ui/button";
+import { api } from "@/convex/_generated/api";
+
+
 import { GetAuthUserData } from "@/services/globalApi";
 import { useGoogleLogin } from "@react-oauth/google";
 import axios from "axios";
+import { useMutation } from "convex/react";
 import Image from "next/image";
 import React from "react";
 
 function SignIn() {
+  const CreateUser = useMutation(api.users.CreateUser);
   // Define authorization URL (example placeholder, update as needed)
   const authorizationURL = "https://your-authorization-url.com";
 
   const googleLogin = useGoogleLogin({
     onSuccess: async (tokenResponse) => {
-      if (typeof window !== undefined) {
+      if (typeof window !== "undefined") {
         localStorage.setItem("user_token", tokenResponse.access_token);
       }
-      const user = GetAuthUserData(tokenResponse.access_token);
+      const user = await GetAuthUserData(tokenResponse.access_token);
       console.log(user);
+
+      //we save the user info
+      const result = await CreateUser({
+        name: user?.name,
+        email: user?.email,
+        picture: user.picture,
+      });
+      console.log("--", result);
     },
     onError: (errorResponse) => console.log(errorResponse),
   });
