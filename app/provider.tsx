@@ -8,6 +8,8 @@ interface ProviderProps {
 }
 
 export default function Provider({ children }: ProviderProps) {
+  console.log("Client ID:", process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID); // Debugging
+
   return (
     <GoogleOAuthProvider clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID!}>
       <NextThemesProvider
